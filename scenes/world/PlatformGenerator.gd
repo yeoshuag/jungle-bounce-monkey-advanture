@@ -10,6 +10,10 @@ const DOUBLE_BANANA_SCENE: PackedScene = preload("res://scenes/collectibles/powe
 const DOUBLE_JUMP_SCENE: PackedScene = preload("res://scenes/collectibles/powerups/DoubleJumpPowerup.tscn")
 const SHIELD_SCENE: PackedScene = preload("res://scenes/collectibles/powerups/ShieldPowerup.tscn")
 const CRUSHER_SCENE: PackedScene = preload("res://scenes/world/hazards/CrusherHazard.tscn")
+const BEE_SCENE: PackedScene = preload("res://scenes/world/enemies/Bee.tscn")
+const SNAKE_SCENE: PackedScene = preload("res://scenes/world/enemies/Snake.tscn")
+const PARROT_SCENE: PackedScene = preload("res://scenes/world/enemies/Parrot.tscn")
+const SPIRIT_SCENE: PackedScene = preload("res://scenes/world/enemies/JungleSpirit.tscn")
 
 const MIN_GAP := 90.0
 const MAX_GAP := 170.0
@@ -20,10 +24,12 @@ const BREAKING_POOL_SIZE := 8
 const BANANA_POOL_SIZE := 20
 const POWERUP_POOL_SIZE_EACH := 4
 const CRUSHER_POOL_SIZE := 3
+const ENEMY_POOL_SIZE_EACH := 3
 const BANANA_CHANCE := 0.45
 const POWERUP_CHANCE := 0.05
 const CRUSHER_CHANCE := 0.03
 const CRUSHER_MIN_GAP := 900.0
+const ENEMY_CHANCE := 0.04
 const INITIAL_ROWS := 10
 const POWERUP_KEYS := ["double_banana", "double_jump", "shield"]
 
@@ -36,10 +42,12 @@ var pools: Dictionary = {}
 var banana_pool: Array = []
 var powerup_pools: Dictionary = {}
 var crusher_pool: Array = []
+var enemy_pools: Dictionary = {}
 var active_platforms: Array = []
 var active_bananas: Array = []
 var active_powerups: Array = []
 var active_crushers: Array = []
+var active_enemies: Array = []
 
 func _ready() -> void:
 	screen_width = get_viewport_rect().size.x
@@ -58,6 +66,10 @@ func _ready() -> void:
 		var c: CrusherHazard = CRUSHER_SCENE.instantiate()
 		add_child(c)
 		crusher_pool.append(c)
+	enemy_pools["bee"] = _build_enemy_pool(BEE_SCENE, ENEMY_POOL_SIZE_EACH)
+	enemy_pools["snake"] = _build_enemy_pool(SNAKE_SCENE, ENEMY_POOL_SIZE_EACH)
+	enemy_pools["parrot"] = _build_enemy_pool(PARROT_SCENE, ENEMY_POOL_SIZE_EACH)
+	enemy_pools["spirit"] = _build_enemy_pool(SPIRIT_SCENE, ENEMY_POOL_SIZE_EACH)
 
 func _build_pool(scene: PackedScene, count: int) -> Array:
 	var list: Array = []
@@ -71,6 +83,14 @@ func _build_powerup_pool(scene: PackedScene, count: int) -> Array:
 	var list: Array = []
 	for i in range(count):
 		var inst: PowerupBase = scene.instantiate()
+		add_child(inst)
+		list.append(inst)
+	return list
+
+func _build_enemy_pool(scene: PackedScene, count: int) -> Array:
+	var list: Array = []
+	for i in range(count):
+		var inst: EnemyBase = scene.instantiate()
 		add_child(inst)
 		list.append(inst)
 	return list
@@ -94,6 +114,9 @@ func reset() -> void:
 	for c: CrusherHazard in active_crushers:
 		c.deactivate()
 	active_crushers.clear()
+	for e: EnemyBase in active_enemies:
+		e.deactivate()
+	active_enemies.clear()
 
 func _spawn_initial(start_y: float) -> void:
 	_spawn_starting_platform(start_y)
@@ -105,7 +128,8 @@ func _spawn_initial(start_y: float) -> void:
 
 func _spawn_starting_platform(start_y: float) -> void:
 	var plat: PlatformBase = _get_from_pool("normal")
-	plat.activate(Vector2(screen_width / 2.0, start_y + 30.0))
+	var tint: Color = BiomeManager.tint_for_altitude(-start_y)
+	plat.activate(Vector2(screen_width / 2.0, start_y + 30.0), tint)
 	active_platforms.append(plat)
 
 func _get_from_pool(key: String) -> PlatformBase:
@@ -132,6 +156,12 @@ func _get_crusher() -> CrusherHazard:
 			return c
 	return crusher_pool[0]
 
+func _get_enemy(key: String) -> EnemyBase:
+	for e: EnemyBase in enemy_pools[key]:
+		if not e.active:
+			return e
+	return enemy_pools[key][0]
+
 func _weighted_type(difficulty: float) -> String:
 	var r: float = randf()
 	var normal_w: float = lerp(0.60, 0.30, difficulty)
@@ -150,11 +180,13 @@ func _weighted_type(difficulty: float) -> String:
 		return "spring"
 
 func _spawn_platform_row(y: float) -> void:
-	var difficulty: float = GameManager.difficulty_for_altitude(-y)
+	var alt: float = -y
+	var difficulty: float = GameManager.difficulty_for_altitude(alt)
 	var key: String = _weighted_type(difficulty)
 	var plat: PlatformBase = _get_from_pool(key)
 	var x: float = randf_range(90.0, screen_width - 90.0)
-	plat.activate(Vector2(x, y))
+	var tint: Color = BiomeManager.tint_for_altitude(alt)
+	plat.activate(Vector2(x, y), tint)
 	active_platforms.append(plat)
 	if randf() < POWERUP_CHANCE:
 		var powerup_key: String = POWERUP_KEYS[randi() % POWERUP_KEYS.size()]
@@ -170,6 +202,13 @@ func _spawn_platform_row(y: float) -> void:
 		crusher.activate(y - 300.0)
 		active_crushers.append(crusher)
 		last_crusher_y = y
+	var eligible_enemies: Array = BiomeManager.enemies_for_altitude(alt)
+	if eligible_enemies.size() > 0 and randf() < ENEMY_CHANCE:
+		var enemy_key: String = eligible_enemies[randi() % eligible_enemies.size()]
+		var enemy: EnemyBase = _get_enemy(enemy_key)
+		var ex: float = randf_range(60.0, screen_width - 60.0)
+		enemy.activate(Vector2(ex, y - 90.0))
+		active_enemies.append(enemy)
 
 func _process(_delta: float) -> void:
 	if camera == null:
@@ -194,3 +233,7 @@ func _process(_delta: float) -> void:
 		if not c.active or c.global_position.y > despawn_line:
 			c.deactivate()
 			active_crushers.erase(c)
+	for e: EnemyBase in active_enemies.duplicate():
+		if not e.active or e.global_position.y > despawn_line:
+			e.deactivate()
+			active_enemies.erase(e)

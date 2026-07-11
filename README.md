@@ -21,10 +21,19 @@ occasionally spawn on platforms and buff the run for a few seconds. A
 Breaking platform type crumbles a moment after you bounce off it, and a
 Crusher Walls hazard periodically squeezes in from both screen edges.
 
-Planned next phases (not yet built): more biomes, more platform/hazard
-types, enemies, more powerup types, cosmetic shop/skins,
-missions/achievements/daily rewards, ads + analytics integration, and
-Google Play publishing materials.
+An altitude-based biome system (`autoload/BiomeManager.gd`) shifts the sky
+color and platform tint through six biomes as you climb — Jungle, Temple,
+Volcano, Night Forest, Cloud Kingdom, Space Jungle — with a name banner on
+each transition. Four enemies (Bee, Snake, Parrot, Jungle Spirit) spawn
+only in their matching biome(s) and behave as instant-death hazards (same
+`"hazard"` group / shield-aware `die()` path as Crusher Walls).
+
+Planned next phases (not yet built): remaining platform types (Ice,
+Sticky, Golden, Cloud, Secret, Treasure, Swinging Vine), remaining
+powerups (Rocket Banana, Slow Motion, Golden Monkey, Banana Rain), rare
+collectibles (Golden Banana, Treasure Chest, Ancient Idol, Magic Fruit),
+cosmetic shop/skins, missions/achievements/daily rewards, ads + analytics
+integration, and Google Play publishing materials.
 
 ## Android export
 
@@ -52,14 +61,14 @@ templates and writing the matching `.build_version` marker itself.
 ## Project layout
 
 ```
-autoload/            GameManager, SaveManager, UpgradeManager, AudioManager (singletons)
+autoload/            GameManager, SaveManager, UpgradeManager, BiomeManager, AudioManager (singletons)
 scenes/
   Splash.tscn         Custom boot splash (no Godot branding)
   MainMenu.tscn        Main menu
   Game.tscn            Gameplay root (camera, player, generator, HUD/pause/game-over)
   player/              Player controller + procedural monkey visual
-  world/               Endless platform generator + pooled platform types
-                       and hazards (world/hazards/)
+  world/               Endless platform generator + pooled platform types,
+                       hazards (world/hazards/), and enemies (world/enemies/)
   collectibles/        Banana pickup + momentary powerups (powerups/)
   ui/                  HUD, Pause menu, Game Over menu, Upgrades screen
 ```

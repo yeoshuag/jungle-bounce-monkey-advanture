@@ -21,6 +21,7 @@ func _ready() -> void:
 	_start_run()
 
 func _start_run() -> void:
+	BiomeManager.reset()
 	player.reset(start_y)
 	platform_generator.reset()
 	platform_generator.setup(camera, start_y)
@@ -33,6 +34,7 @@ func _physics_process(_delta: float) -> void:
 	var target_y: float = min(camera.global_position.y, player.global_position.y)
 	camera.global_position.y = lerp(camera.global_position.y, target_y, 0.15)
 	GameManager.report_altitude(start_y - camera.global_position.y)
+	BiomeManager.update_for_altitude(GameManager.altitude)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):

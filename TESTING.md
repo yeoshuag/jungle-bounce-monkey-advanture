@@ -53,6 +53,30 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
       cycle. Touching a wall while extended ends the run the same way a fall
       does (respects an active Shield instead of always killing you).
 
+## Biomes & enemies
+
+- [ ] The sky color gradually shifts (not an instant cut) as you climb, and
+      a centered banner briefly shows the new biome name (Jungle → Temple
+      → Volcano → Night Forest → Cloud Kingdom → Space Jungle) at each
+      transition. In Godot units the thresholds are altitude 3000/6000/
+      9000/12000/15000 (300m/600m/900m/1200m/1500m in the HUD's displayed
+      meters) — reaching those in the editor may require a debug altitude
+      cheat or a long play session.
+- [ ] Platform colors visibly tint per biome (e.g. stony in Temple, dark
+      red in Volcano, cool blue-purple in Night Forest, pale in Cloud
+      Kingdom) while still clearly readable as the same platform types.
+- [ ] Starting a new run (RETRY or PLAY) always resets the sky back to
+      Jungle green immediately, not wherever the previous run's climb left
+      it.
+- [ ] Bee (buzzing yellow circle with wings, bobbing sine-wave flight) and
+      Snake (green, patrols side to side) appear only in Jungle/Temple
+      altitude ranges; Parrot (flies straight across, red/blue) only in
+      Cloud Kingdom (and Space Jungle); Jungle Spirit (purple, fading in
+      and out, drifting in a loop) only in Night Forest (and Space
+      Jungle).
+- [ ] Touching any enemy ends the run exactly like falling or a Crusher
+      Wall would — including being blocked/rescued by an active Shield.
+
 ## Pause / death / save loop
 
 - [ ] Tapping the "II" button (top-right) pauses the game, dims the
@@ -127,12 +151,14 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
 
 ## Known Phase 1 scope limits (expected, not bugs)
 
-- Only one biome (Jungle) and four platform types (Normal/Moving/Spring/
-  Breaking) plus one hazard (Crusher Walls) exist. Cloud/Ice platforms,
-  other biomes, enemies (bees/parrots/snakes), other environmental hazards
-  (falling coconuts, fire, falling rocks), cosmetic shop (skins/hats/
-  trails), missions, ads, and analytics are intentionally not implemented
-  yet.
+- Four platform types (Normal/Moving/Spring/Breaking) plus one hazard
+  (Crusher Walls) exist across all 6 biomes — biomes currently reskin
+  colors and gate which of the 4 enemies can spawn, they don't yet add
+  new platform types or hazards per biome (e.g. no lava/fire in Volcano
+  yet). Ice/Sticky/Golden/Cloud/Secret/Treasure platforms, Swinging Vine,
+  other environmental hazards (falling coconuts, fire, falling rocks),
+  cosmetic shop (skins/hats/trails), missions, ads, and analytics are
+  intentionally not implemented yet.
 - Only 3 momentary powerup types exist (Double Bananas, Double Jump,
   Shield) — Banana Rain, Golden Monkey, Rocket Banana, and Slow Motion from
   the original spec are not implemented yet.

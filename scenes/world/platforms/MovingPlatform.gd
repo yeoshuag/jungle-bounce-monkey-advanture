@@ -10,8 +10,8 @@ func _ready() -> void:
 	super._ready()
 	screen_width = get_viewport_rect().size.x
 
-func activate(pos: Vector2) -> void:
-	super.activate(pos)
+func activate(pos: Vector2, p_tint: Color = Color(1.0, 1.0, 1.0)) -> void:
+	super.activate(pos, p_tint)
 	direction = 1 if randf() < 0.5 else -1
 
 func _physics_process(delta: float) -> void:
@@ -27,5 +27,5 @@ func _physics_process(delta: float) -> void:
 		direction = -1
 
 func _draw() -> void:
-	draw_rect(Rect2(-width / 2.0, -10, width, 20), Color(0.85, 0.65, 0.15), true)
-	draw_rect(Rect2(-width / 2.0, -10, width, 6), Color(0.95, 0.8, 0.3), true)
+	draw_rect(Rect2(-width / 2.0, -10, width, 20), Color(0.85, 0.65, 0.15) * tint, true)
+	draw_rect(Rect2(-width / 2.0, -10, width, 6), Color(0.95, 0.8, 0.3) * tint, true)

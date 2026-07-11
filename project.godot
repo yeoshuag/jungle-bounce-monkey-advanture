@@ -15,6 +15,7 @@ boot_splash/bg_color=Color(0.06, 0.35, 0.12, 1)
 GameManager="*res://autoload/GameManager.gd"
 SaveManager="*res://autoload/SaveManager.gd"
 UpgradeManager="*res://autoload/UpgradeManager.gd"
+BiomeManager="*res://autoload/BiomeManager.gd"
 AudioManager="*res://autoload/AudioManager.gd"
 
 [display]
