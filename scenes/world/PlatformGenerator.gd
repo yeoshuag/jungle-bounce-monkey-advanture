@@ -96,11 +96,17 @@ func reset() -> void:
 	active_crushers.clear()
 
 func _spawn_initial(start_y: float) -> void:
+	_spawn_starting_platform(start_y)
 	var y: float = start_y
 	for i in range(INITIAL_ROWS):
 		y -= randf_range(MIN_GAP, MAX_GAP)
 		_spawn_platform_row(y)
 	highest_spawned_y = y
+
+func _spawn_starting_platform(start_y: float) -> void:
+	var plat: PlatformBase = _get_from_pool("normal")
+	plat.activate(Vector2(screen_width / 2.0, start_y + 30.0))
+	active_platforms.append(plat)
 
 func _get_from_pool(key: String) -> PlatformBase:
 	for p: PlatformBase in pools[key]:

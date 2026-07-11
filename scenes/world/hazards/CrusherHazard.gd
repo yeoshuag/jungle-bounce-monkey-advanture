@@ -8,7 +8,7 @@ const CRUSH_HOLD_TIME := 0.4
 const RETRACT_TIME := 0.6
 const RETRACTED_HOLD_TIME := 1.2
 const GAP_HALF_WIDTH := 70.0
-const WALL_THICKNESS := 50.0
+const WALL_THICKNESS := CrusherWallArm.WIDTH
 
 var active: bool = false
 var state: int = State.RETRACTED

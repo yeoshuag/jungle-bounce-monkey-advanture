@@ -21,6 +21,9 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
 
 ## Core gameplay
 
+- [ ] Every run (first PLAY and every RETRY) always starts with a normal
+      platform directly beneath the monkey — it should never appear to
+      start mid-fall with nothing below it.
 - [ ] The monkey auto-bounces continuously without any input.
 - [ ] Dragging a finger (or holding + moving the mouse) left/right steers
       the monkey directly to the drag position (1:1 tracking, no lag/drift).
