@@ -44,6 +44,12 @@ custom_minimum_size = Vector2(0, 100)
 theme_override_font_sizes/font_size = 34
 text = "PLAY"
 
+[node name="UpgradesButton" type="Button" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+theme_override_font_sizes/font_size = 26
+text = "UPGRADES"
+
 [node name="QuitButton" type="Button" parent="VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 80)

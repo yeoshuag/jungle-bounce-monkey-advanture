@@ -64,6 +64,9 @@ func play_button() -> void:
 func play_death() -> void:
 	play_tone(140.0, 0.3, "square")
 
+func play_shield_break() -> void:
+	play_tone(950.0, 0.22, "sine")
+
 func _process(delta: float) -> void:
 	var volume: float = _volume_scale()
 	for v: Voice in voices:

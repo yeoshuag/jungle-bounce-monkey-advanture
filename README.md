@@ -14,9 +14,13 @@ scope. Confirmed running on a real Android device via the debug APK built
 by `.github/workflows/android-build.yml` (GitHub Actions → run → Artifacts).
 See `TESTING.md` for the full manual test checklist.
 
+Banana-funded stat upgrades (Jump Power, Banana Magnet, Shield Duration,
+Combo Bonus) are implemented via an Upgrades screen off the Main Menu.
+
 Planned next phases (not yet built): more biomes, additional platform
-types, enemies/hazards, powerups, shop/skins, missions/achievements/daily
-rewards, ads + analytics integration, and Google Play publishing materials.
+types, enemies/hazards, in-world powerup pickups, cosmetic shop/skins,
+missions/achievements/daily rewards, ads + analytics integration, and
+Google Play publishing materials.
 
 ## Requirements
 
@@ -34,7 +38,7 @@ rewards, ads + analytics integration, and Google Play publishing materials.
 ## Project layout
 
 ```
-autoload/            GameManager, SaveManager, AudioManager (singletons)
+autoload/            GameManager, SaveManager, UpgradeManager, AudioManager (singletons)
 scenes/
   Splash.tscn         Custom boot splash (no Godot branding)
   MainMenu.tscn        Main menu
@@ -42,7 +46,7 @@ scenes/
   player/              Player controller + procedural monkey visual
   world/               Endless platform generator + pooled platform types
   collectibles/        Banana pickup
-  ui/                  HUD, Pause menu, Game Over menu
+  ui/                  HUD, Pause menu, Game Over menu, Upgrades screen
 ```
 
 ## Controls

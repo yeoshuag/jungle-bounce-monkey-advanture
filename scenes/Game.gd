@@ -16,6 +16,7 @@ func _ready() -> void:
 	game_over_menu.visible = false
 	player.died.connect(_on_player_died)
 	player.jumped.connect(_on_player_jumped)
+	player.shield_broken.connect(_on_player_shield_broken)
 	get_tree().paused = false
 	_start_run()
 
@@ -45,6 +46,9 @@ func toggle_pause() -> void:
 
 func _on_player_jumped() -> void:
 	AudioManager.play_jump()
+
+func _on_player_shield_broken() -> void:
+	AudioManager.play_shield_break()
 
 func _on_player_died() -> void:
 	AudioManager.play_death()

@@ -3,11 +3,14 @@ class_name Player
 
 signal jumped
 signal died
+signal shield_broken
 
 const GRAVITY := 1600.0
 const BASE_JUMP_FORCE := 820.0
+const RESCUE_JUMP_FORCE := 1100.0
 const MAX_FALL_SPEED := 1400.0
 const HALF_WIDTH := 24.0
+const MIN_MAGNET_SHAPE_RADIUS := 1.0
 
 @export var jump_power_multiplier: float = 1.0
 @export var move_speed: float = 700.0
@@ -17,20 +20,30 @@ var target_x: float = 0.0
 var is_dragging: bool = false
 var alive: bool = true
 var screen_width: float = 720.0
+var shield_time_remaining: float = 0.0
 
 @onready var sprite: MonkeySprite = $MonkeySprite
+@onready var magnet_area: Area2D = $MagnetArea
+@onready var magnet_shape: CircleShape2D = $MagnetArea/CollisionShape2D.shape
 
 func _ready() -> void:
 	screen_width = get_viewport_rect().size.x
 	target_x = position.x
 	area_entered.connect(_on_area_entered)
+	magnet_area.area_entered.connect(_on_area_entered)
 
 func reset(start_y: float) -> void:
 	alive = true
 	is_dragging = false
+	jump_power_multiplier = UpgradeManager.get_jump_multiplier()
 	velocity_y = -BASE_JUMP_FORCE
 	position = Vector2(screen_width / 2.0, start_y)
 	target_x = position.x
+	var magnet_radius: float = UpgradeManager.get_magnet_radius()
+	magnet_shape.radius = max(magnet_radius, MIN_MAGNET_SHAPE_RADIUS)
+	magnet_area.monitoring = magnet_radius > 0.0
+	shield_time_remaining = UpgradeManager.get_shield_duration()
+	sprite.set_shielded(shield_time_remaining > 0.0)
 
 func _physics_process(delta: float) -> void:
 	if not alive:
@@ -41,6 +54,10 @@ func _physics_process(delta: float) -> void:
 	position.x = clamp(position.x, HALF_WIDTH, screen_width - HALF_WIDTH)
 	position.y += velocity_y * delta
 	sprite.squash = clamp(1.0 + velocity_y / 3000.0, 0.75, 1.25)
+	if shield_time_remaining > 0.0:
+		shield_time_remaining = max(0.0, shield_time_remaining - delta)
+		if shield_time_remaining <= 0.0:
+			sprite.set_shielded(false)
 	if position.y > _death_line():
 		die()
 
@@ -83,6 +100,12 @@ func bounce(force: float) -> void:
 
 func die() -> void:
 	if not alive:
+		return
+	if shield_time_remaining > 0.0:
+		shield_time_remaining = 0.0
+		sprite.set_shielded(false)
+		velocity_y = -RESCUE_JUMP_FORCE
+		shield_broken.emit()
 		return
 	alive = false
 	died.emit()

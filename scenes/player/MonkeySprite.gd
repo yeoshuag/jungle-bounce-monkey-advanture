@@ -9,7 +9,15 @@ var squash: float = 1.0:
 		squash = value
 		scale = Vector2(1.0 / value, value)
 
+var shielded: bool = false
+
+func set_shielded(value: bool) -> void:
+	shielded = value
+	queue_redraw()
+
 func _draw() -> void:
+	if shielded:
+		draw_arc(Vector2.ZERO, 30.0, 0.0, TAU, 32, Color(0.4, 0.85, 1.0, 0.55), 4.0, true)
 	draw_circle(Vector2(-16, -20), 8, body_color)
 	draw_circle(Vector2(16, -20), 8, body_color)
 	draw_circle(Vector2.ZERO, 18, body_color)

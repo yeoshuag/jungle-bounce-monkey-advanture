@@ -6,7 +6,6 @@ signal combo_changed(combo: int)
 signal combo_broken
 signal altitude_changed(altitude: float)
 
-const COMBO_TIMEOUT := 2.5
 const COMBO_MAX_MULTIPLIER := 5
 
 var is_running: bool = false
@@ -15,6 +14,7 @@ var max_altitude_this_run: float = 0.0
 var bananas_this_run: int = 0
 var combo: int = 0
 var combo_timer: float = 0.0
+var combo_timeout: float = 2.5
 
 func _process(delta: float) -> void:
 	if not is_running:
@@ -32,6 +32,7 @@ func start_run() -> void:
 	bananas_this_run = 0
 	combo = 0
 	combo_timer = 0.0
+	combo_timeout = UpgradeManager.get_combo_timeout()
 	run_started.emit()
 
 func end_run() -> void:
@@ -51,7 +52,7 @@ func report_altitude(new_altitude: float) -> void:
 
 func collect_banana(base_value: int = 1) -> void:
 	combo += 1
-	combo_timer = COMBO_TIMEOUT
+	combo_timer = combo_timeout
 	var multiplier: int = min(1 + combo / 5, COMBO_MAX_MULTIPLIER)
 	var value: int = base_value * multiplier
 	bananas_this_run += value

@@ -61,6 +61,31 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
       or delete it) and relaunch — the game should start cleanly with
       default values instead of crashing.
 
+## Upgrades
+
+- [ ] Main Menu has an UPGRADES button below PLAY, opening a screen with 4
+      rows: Jump Power, Banana Magnet, Shield Duration, Combo Bonus, each
+      showing a level (Lv 0/5), a banana cost, and an UPGRADE button.
+- [ ] With 0 bananas, all UPGRADE buttons are disabled; the button re-enables
+      itself for a stat once you have enough banked bananas (play a run,
+      collect bananas, return to Upgrades).
+- [ ] Buying an upgrade deducts the shown cost, bumps that row's level, and
+      updates the cost for the next level (or shows "MAX" at level 5/5).
+- [ ] Jump Power level > 0: bounces are visibly higher than at level 0.
+- [ ] Banana Magnet level > 0: bananas get collected automatically when the
+      monkey passes near them without directly touching them; at level 0
+      only direct contact collects them.
+- [ ] Shield Duration level > 0: the monkey shows a translucent blue ring at
+      the start of a run; falling off-screen during that window doesn't end
+      the run (a rescue bounce + distinct sound plays and the ring
+      disappears) — after the shield window elapses (or after one save),
+      falling ends the run normally.
+- [ ] Combo Bonus level > 0: the combo label stays up longer than ~2.5s
+      after your last banana before clearing.
+- [ ] BACK returns to the Main Menu. Upgrade levels persist across app
+      restart (same corrupt-save-file check as above should default
+      upgrades to level 0 instead of crashing).
+
 ## Performance sanity
 
 - [ ] Use Debugger → Monitors → FPS while playing for a couple of minutes
@@ -70,6 +95,9 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
 ## Known Phase 1 scope limits (expected, not bugs)
 
 - Only one biome (Jungle) and three platform types (Normal/Moving/Spring)
-  exist. Breaking/Cloud/Ice/etc., other biomes, enemies/hazards, powerups,
-  shop, missions, ads, and analytics are intentionally not implemented yet.
+  exist. Breaking/Cloud/Ice/etc., other biomes, enemies/hazards, in-world
+  powerup pickups, cosmetic shop (skins/hats/trails), missions, ads, and
+  analytics are intentionally not implemented yet.
+- Shield exists only as an upgrade-granted starting buff (Phase 1 scope) —
+  it is not yet a pickup that appears mid-run.
 - No dedicated Settings screen yet — only a Mute toggle inside Pause.

@@ -18,6 +18,12 @@ func _default_data() -> Dictionary:
 			"sfx_volume": 1.0,
 			"muted": false,
 		},
+		"upgrades": {
+			"jump_power": 0,
+			"banana_collection": 0,
+			"shield_duration": 0,
+			"combo_bonus": 0,
+		},
 	}
 
 func load_game() -> void:
@@ -39,6 +45,8 @@ func load_game() -> void:
 		loaded[key] = parsed[key]
 	if typeof(loaded.get("settings")) != TYPE_DICTIONARY:
 		loaded["settings"] = _default_data()["settings"]
+	if typeof(loaded.get("upgrades")) != TYPE_DICTIONARY:
+		loaded["upgrades"] = _default_data()["upgrades"]
 	data = loaded
 
 func save_game() -> void:
