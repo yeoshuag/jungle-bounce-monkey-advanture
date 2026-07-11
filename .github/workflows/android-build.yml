@@ -34,7 +34,7 @@ jobs:
       - name: Install Android SDK build-tools & platform
         run: |
           yes | sdkmanager --licenses > /dev/null
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" "ndk;23.2.8568313" "cmake;3.10.2.4988404"
 
       - name: Set up Godot
         uses: chickensoft-games/setup-godot@v2
