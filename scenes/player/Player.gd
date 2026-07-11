@@ -13,6 +13,7 @@ const HALF_WIDTH := 24.0
 const MIN_MAGNET_SHAPE_RADIUS := 1.0
 const DOUBLE_JUMP_FACTOR := 2.0
 const ICE_SLIDE_SPEED_FACTOR := 0.35
+const MOMENTUM_FACTOR := 1.0
 
 @export var jump_power_multiplier: float = 1.0
 @export var move_speed: float = 700.0
@@ -111,10 +112,11 @@ func _on_area_entered(area: Area2D) -> void:
 			bounce(force)
 
 func bounce(force: float) -> void:
+	var effective_force: float = max(force, velocity_y * MOMENTUM_FACTOR)
 	var multiplier: float = jump_power_multiplier
 	if GameManager.double_jump_time_remaining > 0.0:
 		multiplier *= DOUBLE_JUMP_FACTOR
-	velocity_y = -force * multiplier
+	velocity_y = -effective_force * multiplier
 	jumped.emit()
 
 func apply_shield(duration: float) -> void:

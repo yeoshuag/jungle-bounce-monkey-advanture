@@ -29,6 +29,12 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
       the monkey directly to the drag position (1:1 tracking, no lag/drift).
 - [ ] Dragging past either screen edge stops the monkey right at the edge
       (clamped) — it never leaves the screen or wraps to the other side.
+- [ ] Falling a long way before landing (e.g. past where a Breaking or
+      Treasure platform used to be, or any unusually large gap) launches
+      the monkey noticeably higher than that platform's normal bounce —
+      high enough to still reach the platform above the gap. Normal-sized
+      gaps should feel unchanged from before (momentum only kicks in above
+      the platform's own bounce strength).
 - [ ] The monkey lands on green (Normal), gold (Moving, drifts side to
       side), and platforms with a red coil on top (Spring, launches much
       higher) and bounces upward off each.
