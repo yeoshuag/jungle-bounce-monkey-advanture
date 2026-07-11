@@ -55,11 +55,14 @@ jobs:
             exit 1
           fi
           echo "Using android_source.zip at: $SRC_ZIP"
+          TEMPLATE_VERSION=$(basename "$(dirname "$SRC_ZIP")")
+          echo "Derived template version identifier: $TEMPLATE_VERSION"
           mkdir -p android/build
           unzip -oq "$SRC_ZIP" -d android/build
+          echo "$TEMPLATE_VERSION" > android/.build_version
           touch android/.gdignore
           chmod +x android/build/gradlew || true
-          ls -la android/build
+          ls -la android
 
       - name: Generate debug keystore
         run: |
