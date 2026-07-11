@@ -40,8 +40,15 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
       playing for ~30s and confirm the total node count under
       `PlatformGenerator` stays roughly constant — this validates pooling
       instead of unbounded node growth).
-- [ ] Difficulty visibly ramps up with altitude (more moving/spring
+- [ ] Difficulty visibly ramps up with altitude (more moving/spring/breaking
       platforms, tighter gaps) the higher you climb.
+- [ ] Brown platforms (Breaking) crack and darken the instant you bounce off
+      them, then disappear about 0.3s later with a distinct sound — always
+      *after* you've already bounced (never before/instead of the bounce).
+- [ ] Occasionally a pair of spiked gray walls slides in from the left and
+      right edges, holds closed for a moment, then retracts — repeating on a
+      cycle. Touching a wall while extended ends the run the same way a fall
+      does (respects an active Shield instead of always killing you).
 
 ## Pause / death / save loop
 
@@ -78,8 +85,10 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
 - [ ] Shield Duration level > 0: the monkey shows a translucent blue ring at
       the start of a run; falling off-screen during that window doesn't end
       the run (a rescue bounce + distinct sound plays and the ring
-      disappears) — after the shield window elapses (or after one save),
-      falling ends the run normally.
+      disappears) — the rescued monkey actually survives and keeps playing
+      (it should not die again immediately on the next frame) — after the
+      shield window elapses (or after one save), falling ends the run
+      normally.
 - [ ] Combo Bonus level > 0: the combo label stays up longer than ~2.5s
       after your last banana before clearing.
 - [ ] BACK returns to the Main Menu. Upgrade levels persist across app
@@ -115,10 +124,12 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
 
 ## Known Phase 1 scope limits (expected, not bugs)
 
-- Only one biome (Jungle) and three platform types (Normal/Moving/Spring)
-  exist. Breaking/Cloud/Ice/etc., other biomes, enemies/hazards, cosmetic
-  shop (skins/hats/trails), missions, ads, and analytics are intentionally
-  not implemented yet.
+- Only one biome (Jungle) and four platform types (Normal/Moving/Spring/
+  Breaking) plus one hazard (Crusher Walls) exist. Cloud/Ice platforms,
+  other biomes, enemies (bees/parrots/snakes), other environmental hazards
+  (falling coconuts, fire, falling rocks), cosmetic shop (skins/hats/
+  trails), missions, ads, and analytics are intentionally not implemented
+  yet.
 - Only 3 momentary powerup types exist (Double Bananas, Double Jump,
   Shield) — Banana Rain, Golden Monkey, Rocket Banana, and Slow Motion from
   the original spec are not implemented yet.

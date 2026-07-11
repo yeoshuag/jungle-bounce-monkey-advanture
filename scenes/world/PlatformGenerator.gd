@@ -4,39 +4,49 @@ class_name PlatformGenerator
 const NORMAL_SCENE: PackedScene = preload("res://scenes/world/platforms/NormalPlatform.tscn")
 const MOVING_SCENE: PackedScene = preload("res://scenes/world/platforms/MovingPlatform.tscn")
 const SPRING_SCENE: PackedScene = preload("res://scenes/world/platforms/SpringPlatform.tscn")
+const BREAKING_SCENE: PackedScene = preload("res://scenes/world/platforms/BreakingPlatform.tscn")
 const BANANA_SCENE: PackedScene = preload("res://scenes/collectibles/Banana.tscn")
 const DOUBLE_BANANA_SCENE: PackedScene = preload("res://scenes/collectibles/powerups/DoubleBananaPowerup.tscn")
 const DOUBLE_JUMP_SCENE: PackedScene = preload("res://scenes/collectibles/powerups/DoubleJumpPowerup.tscn")
 const SHIELD_SCENE: PackedScene = preload("res://scenes/collectibles/powerups/ShieldPowerup.tscn")
+const CRUSHER_SCENE: PackedScene = preload("res://scenes/world/hazards/CrusherHazard.tscn")
 
 const MIN_GAP := 90.0
 const MAX_GAP := 170.0
 const NORMAL_POOL_SIZE := 10
 const MOVING_POOL_SIZE := 10
 const SPRING_POOL_SIZE := 6
+const BREAKING_POOL_SIZE := 8
 const BANANA_POOL_SIZE := 20
 const POWERUP_POOL_SIZE_EACH := 4
+const CRUSHER_POOL_SIZE := 3
 const BANANA_CHANCE := 0.45
 const POWERUP_CHANCE := 0.05
+const CRUSHER_CHANCE := 0.03
+const CRUSHER_MIN_GAP := 900.0
 const INITIAL_ROWS := 10
 const POWERUP_KEYS := ["double_banana", "double_jump", "shield"]
 
 var camera: Camera2D
 var highest_spawned_y: float = 0.0
 var screen_width: float = 720.0
+var last_crusher_y: float = 1000000.0
 
 var pools: Dictionary = {}
 var banana_pool: Array = []
 var powerup_pools: Dictionary = {}
+var crusher_pool: Array = []
 var active_platforms: Array = []
 var active_bananas: Array = []
 var active_powerups: Array = []
+var active_crushers: Array = []
 
 func _ready() -> void:
 	screen_width = get_viewport_rect().size.x
 	pools["normal"] = _build_pool(NORMAL_SCENE, NORMAL_POOL_SIZE)
 	pools["moving"] = _build_pool(MOVING_SCENE, MOVING_POOL_SIZE)
 	pools["spring"] = _build_pool(SPRING_SCENE, SPRING_POOL_SIZE)
+	pools["breaking"] = _build_pool(BREAKING_SCENE, BREAKING_POOL_SIZE)
 	for i in range(BANANA_POOL_SIZE):
 		var b: Banana = BANANA_SCENE.instantiate()
 		add_child(b)
@@ -44,6 +54,10 @@ func _ready() -> void:
 	powerup_pools["double_banana"] = _build_powerup_pool(DOUBLE_BANANA_SCENE, POWERUP_POOL_SIZE_EACH)
 	powerup_pools["double_jump"] = _build_powerup_pool(DOUBLE_JUMP_SCENE, POWERUP_POOL_SIZE_EACH)
 	powerup_pools["shield"] = _build_powerup_pool(SHIELD_SCENE, POWERUP_POOL_SIZE_EACH)
+	for i in range(CRUSHER_POOL_SIZE):
+		var c: CrusherHazard = CRUSHER_SCENE.instantiate()
+		add_child(c)
+		crusher_pool.append(c)
 
 func _build_pool(scene: PackedScene, count: int) -> Array:
 	var list: Array = []
@@ -64,6 +78,7 @@ func _build_powerup_pool(scene: PackedScene, count: int) -> Array:
 func setup(start_camera: Camera2D, start_y: float) -> void:
 	camera = start_camera
 	highest_spawned_y = start_y
+	last_crusher_y = 1000000.0
 	_spawn_initial(start_y)
 
 func reset() -> void:
@@ -76,6 +91,9 @@ func reset() -> void:
 	for p: PowerupBase in active_powerups:
 		p.deactivate()
 	active_powerups.clear()
+	for c: CrusherHazard in active_crushers:
+		c.deactivate()
+	active_crushers.clear()
 
 func _spawn_initial(start_y: float) -> void:
 	var y: float = start_y
@@ -102,14 +120,26 @@ func _get_powerup(key: String) -> PowerupBase:
 			return p
 	return powerup_pools[key][0]
 
+func _get_crusher() -> CrusherHazard:
+	for c: CrusherHazard in crusher_pool:
+		if not c.active:
+			return c
+	return crusher_pool[0]
+
 func _weighted_type(difficulty: float) -> String:
 	var r: float = randf()
-	var normal_ceiling: float = 0.65 - difficulty * 0.25
-	var moving_ceiling: float = normal_ceiling + 0.2 + difficulty * 0.15
+	var normal_w: float = lerp(0.60, 0.30, difficulty)
+	var moving_w: float = lerp(0.15, 0.20, difficulty)
+	var breaking_w: float = lerp(0.15, 0.25, difficulty)
+	var normal_ceiling: float = normal_w
+	var moving_ceiling: float = normal_ceiling + moving_w
+	var breaking_ceiling: float = moving_ceiling + breaking_w
 	if r < normal_ceiling:
 		return "normal"
 	elif r < moving_ceiling:
 		return "moving"
+	elif r < breaking_ceiling:
+		return "breaking"
 	else:
 		return "spring"
 
@@ -129,6 +159,11 @@ func _spawn_platform_row(y: float) -> void:
 		var banana: Banana = _get_banana()
 		banana.activate(Vector2(x, y - 46.0))
 		active_bananas.append(banana)
+	if last_crusher_y - y >= CRUSHER_MIN_GAP and randf() < CRUSHER_CHANCE:
+		var crusher: CrusherHazard = _get_crusher()
+		crusher.activate(y - 300.0)
+		active_crushers.append(crusher)
+		last_crusher_y = y
 
 func _process(_delta: float) -> void:
 	if camera == null:
@@ -149,3 +184,7 @@ func _process(_delta: float) -> void:
 	for p: PowerupBase in active_powerups.duplicate():
 		if not p.active or p.global_position.y > despawn_line:
 			active_powerups.erase(p)
+	for c: CrusherHazard in active_crushers.duplicate():
+		if not c.active or c.global_position.y > despawn_line:
+			c.deactivate()
+			active_crushers.erase(c)

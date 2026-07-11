@@ -94,6 +94,9 @@ func _on_area_entered(area: Area2D) -> void:
 		if area.has_method("collect"):
 			area.collect(self)
 		return
+	if area.is_in_group("hazard"):
+		die()
+		return
 	if area.is_in_group("platform") and velocity_y > 0.0:
 		if area.has_method("on_player_bounce"):
 			var force: float = area.on_player_bounce(self)
@@ -117,6 +120,7 @@ func die() -> void:
 		shield_time_remaining = 0.0
 		sprite.set_shielded(false)
 		velocity_y = -RESCUE_JUMP_FORCE
+		position.y = _death_line() - 40.0
 		shield_broken.emit()
 		return
 	alive = false
