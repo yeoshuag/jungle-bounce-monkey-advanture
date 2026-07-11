@@ -86,6 +86,27 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
       restart (same corrupt-save-file check as above should default
       upgrades to level 0 instead of crashing).
 
+## Momentary powerup pickups
+
+- [ ] Occasionally (rarer than bananas) a platform has a glowing orb instead
+      of a banana: yellow-orange with two banana bumps (Double Bananas),
+      orange with a white up-arrow (Double Jump), or blue with a white ring
+      (Shield). It bobs like a banana and disappears with a distinct chime
+      when touched.
+- [ ] Double Bananas: for ~8s after pickup, a "2x BANANAS!" label shows near
+      the top-left and banana values collected are doubled (stacks with
+      combo multiplier); the label clears and doubling stops after ~8s.
+- [ ] Double Jump: for ~8s after pickup, a "2x JUMP!" label shows and every
+      bounce is visibly higher (multiplies on top of any Jump Power upgrade);
+      reverts after ~8s.
+- [ ] Shield pickup: grants/refreshes the same blue ring + rescue-bounce
+      behavior as the Shield Duration upgrade's starting shield (picking one
+      up mid-run when you don't already have a longer shield active should
+      visibly add the ring if it wasn't already showing).
+- [ ] Picking up a second Double Bananas/Double Jump while one is already
+      active refreshes the timer rather than stacking to 4x/extending
+      indefinitely.
+
 ## Performance sanity
 
 - [ ] Use Debugger → Monitors → FPS while playing for a couple of minutes
@@ -95,9 +116,10 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
 ## Known Phase 1 scope limits (expected, not bugs)
 
 - Only one biome (Jungle) and three platform types (Normal/Moving/Spring)
-  exist. Breaking/Cloud/Ice/etc., other biomes, enemies/hazards, in-world
-  powerup pickups, cosmetic shop (skins/hats/trails), missions, ads, and
-  analytics are intentionally not implemented yet.
-- Shield exists only as an upgrade-granted starting buff (Phase 1 scope) —
-  it is not yet a pickup that appears mid-run.
+  exist. Breaking/Cloud/Ice/etc., other biomes, enemies/hazards, cosmetic
+  shop (skins/hats/trails), missions, ads, and analytics are intentionally
+  not implemented yet.
+- Only 3 momentary powerup types exist (Double Bananas, Double Jump,
+  Shield) — Banana Rain, Golden Monkey, Rocket Banana, and Slow Motion from
+  the original spec are not implemented yet.
 - No dedicated Settings screen yet — only a Mute toggle inside Pause.

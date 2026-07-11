@@ -11,6 +11,7 @@ const RESCUE_JUMP_FORCE := 1100.0
 const MAX_FALL_SPEED := 1400.0
 const HALF_WIDTH := 24.0
 const MIN_MAGNET_SHAPE_RADIUS := 1.0
+const DOUBLE_JUMP_FACTOR := 2.0
 
 @export var jump_power_multiplier: float = 1.0
 @export var move_speed: float = 700.0
@@ -89,14 +90,25 @@ func _on_area_entered(area: Area2D) -> void:
 		if area.has_method("collect"):
 			area.collect()
 		return
+	if area.is_in_group("powerup"):
+		if area.has_method("collect"):
+			area.collect(self)
+		return
 	if area.is_in_group("platform") and velocity_y > 0.0:
 		if area.has_method("on_player_bounce"):
 			var force: float = area.on_player_bounce(self)
 			bounce(force)
 
 func bounce(force: float) -> void:
-	velocity_y = -force * jump_power_multiplier
+	var multiplier: float = jump_power_multiplier
+	if GameManager.double_jump_time_remaining > 0.0:
+		multiplier *= DOUBLE_JUMP_FACTOR
+	velocity_y = -force * multiplier
 	jumped.emit()
+
+func apply_shield(duration: float) -> void:
+	shield_time_remaining = max(shield_time_remaining, duration)
+	sprite.set_shielded(true)
 
 func die() -> void:
 	if not alive:

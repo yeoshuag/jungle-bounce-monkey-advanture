@@ -16,9 +16,11 @@ See `TESTING.md` for the full manual test checklist.
 
 Banana-funded stat upgrades (Jump Power, Banana Magnet, Shield Duration,
 Combo Bonus) are implemented via an Upgrades screen off the Main Menu.
+Momentary in-world powerup pickups (Double Bananas, Double Jump, Shield)
+occasionally spawn on platforms and buff the run for a few seconds.
 
 Planned next phases (not yet built): more biomes, additional platform
-types, enemies/hazards, in-world powerup pickups, cosmetic shop/skins,
+types, enemies/hazards, more powerup types, cosmetic shop/skins,
 missions/achievements/daily rewards, ads + analytics integration, and
 Google Play publishing materials.
 
@@ -45,7 +47,7 @@ scenes/
   Game.tscn            Gameplay root (camera, player, generator, HUD/pause/game-over)
   player/              Player controller + procedural monkey visual
   world/               Endless platform generator + pooled platform types
-  collectibles/        Banana pickup
+  collectibles/        Banana pickup + momentary powerups (powerups/)
   ui/                  HUD, Pause menu, Game Over menu, Upgrades screen
 ```
 
