@@ -10,6 +10,7 @@ const MAX_FALL_SPEED := 1400.0
 const HALF_WIDTH := 24.0
 
 @export var jump_power_multiplier: float = 1.0
+@export var move_speed: float = 700.0
 
 var velocity_y: float = 0.0
 var target_x: float = 0.0
@@ -36,7 +37,7 @@ func _physics_process(delta: float) -> void:
 		return
 	velocity_y = min(velocity_y + GRAVITY * delta, MAX_FALL_SPEED)
 	if is_dragging:
-		position.x = target_x
+		position.x = move_toward(position.x, target_x, move_speed * delta)
 	position.x = clamp(position.x, HALF_WIDTH, screen_width - HALF_WIDTH)
 	position.y += velocity_y * delta
 	sprite.squash = clamp(1.0 + velocity_y / 3000.0, 0.75, 1.25)
