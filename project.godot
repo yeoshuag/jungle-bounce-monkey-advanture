@@ -1,0 +1,36 @@
+config_version=5
+
+[application]
+
+config/name="Jungle Bounce: Monkey Adventure"
+config/description="An endless vertical jungle platformer. Drag to steer, bounce forever, chase your best altitude."
+run/main_scene="res://scenes/Splash.tscn"
+config/features=PackedStringArray("4.3", "Mobile")
+config/icon="res://icon.svg"
+boot_splash/show_image=false
+boot_splash/bg_color=Color(0.06, 0.35, 0.12, 1)
+
+[autoload]
+
+GameManager="*res://autoload/GameManager.gd"
+SaveManager="*res://autoload/SaveManager.gd"
+AudioManager="*res://autoload/AudioManager.gd"
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+window/handheld/orientation="portrait"
+window/energy_saving/keep_screen_on=true
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[rendering]
+
+renderer/rendering_method="mobile"
+environment/defaults/default_clear_color=Color(0.55, 0.85, 0.65, 1)
+textures/vram_compression/import_etc2_astc=true
