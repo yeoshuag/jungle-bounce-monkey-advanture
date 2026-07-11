@@ -26,6 +26,16 @@ types, enemies, more powerup types, cosmetic shop/skins,
 missions/achievements/daily rewards, ads + analytics integration, and
 Google Play publishing materials.
 
+## Android export
+
+`export_presets.cfg` uses Godot's full Gradle build (`gradle_build/use_gradle_build=true`),
+not the legacy/quick-test export — the legacy path was found to render the
+game sideways on-device despite a correctly configured manifest, which is
+a known limitation of that path. `.github/workflows/android-build.yml`
+installs the Gradle build template headlessly (normally a GUI-only editor
+action) by extracting `android_source.zip` from the installed export
+templates and writing the matching `.build_version` marker itself.
+
 ## Requirements
 
 - Godot 4.x (4.2 or newer), GL Compatibility or Mobile renderer.
