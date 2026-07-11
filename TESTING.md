@@ -23,9 +23,9 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
 
 - [ ] The monkey auto-bounces continuously without any input.
 - [ ] Dragging a finger (or holding + moving the mouse) left/right steers
-      the monkey smoothly toward the drag position.
-- [ ] Moving off the left/right screen edge wraps the monkey to the
-      opposite side.
+      the monkey directly to the drag position (1:1 tracking, no lag/drift).
+- [ ] Dragging past either screen edge stops the monkey right at the edge
+      (clamped) — it never leaves the screen or wraps to the other side.
 - [ ] The monkey lands on green (Normal), gold (Moving, drifts side to
       side), and platforms with a red coil on top (Spring, launches much
       higher) and bounces upward off each.

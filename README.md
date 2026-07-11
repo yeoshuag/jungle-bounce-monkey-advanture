@@ -10,9 +10,9 @@ you fall.
 This is the first of several planned phases. Phase 1 delivers a fully
 playable core loop in a single biome (Jungle) so the architecture (pooling,
 save system, procedural generation, UI flow) is proven before expanding
-scope. See `TESTING.md` for a manual test checklist — the project has not
-yet been run in a Godot editor, since no editor/binary is available in the
-environment it was authored in.
+scope. Confirmed running on a real Android device via the debug APK built
+by `.github/workflows/android-build.yml` (GitHub Actions → run → Artifacts).
+See `TESTING.md` for the full manual test checklist.
 
 Planned next phases (not yet built): more biomes, additional platform
 types, enemies/hazards, powerups, shop/skins, missions/achievements/daily
