@@ -43,6 +43,24 @@ jobs:
           use-dotnet: false
           include-templates: true
 
+      - name: Install Android Gradle build template
+        run: |
+          SRC_ZIP=$(find "$HOME" -name "android_source.zip" 2>/dev/null | head -n1)
+          if [ -z "$SRC_ZIP" ]; then
+            echo "android_source.zip not found under $HOME; searching more broadly" >&2
+            SRC_ZIP=$(find / -xdev -name "android_source.zip" 2>/dev/null | head -n1)
+          fi
+          if [ -z "$SRC_ZIP" ]; then
+            echo "ERROR: could not locate android_source.zip in the installed export templates" >&2
+            exit 1
+          fi
+          echo "Using android_source.zip at: $SRC_ZIP"
+          mkdir -p android/build
+          unzip -oq "$SRC_ZIP" -d android/build
+          touch android/.gdignore
+          chmod +x android/build/gradlew || true
+          ls -la android/build
+
       - name: Generate debug keystore
         run: |
           mkdir -p "$HOME/.android"
