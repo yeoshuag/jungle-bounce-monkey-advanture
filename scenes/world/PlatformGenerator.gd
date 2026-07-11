@@ -5,6 +5,13 @@ const NORMAL_SCENE: PackedScene = preload("res://scenes/world/platforms/NormalPl
 const MOVING_SCENE: PackedScene = preload("res://scenes/world/platforms/MovingPlatform.tscn")
 const SPRING_SCENE: PackedScene = preload("res://scenes/world/platforms/SpringPlatform.tscn")
 const BREAKING_SCENE: PackedScene = preload("res://scenes/world/platforms/BreakingPlatform.tscn")
+const ICE_SCENE: PackedScene = preload("res://scenes/world/platforms/IcePlatform.tscn")
+const STICKY_SCENE: PackedScene = preload("res://scenes/world/platforms/StickyPlatform.tscn")
+const GOLDEN_SCENE: PackedScene = preload("res://scenes/world/platforms/GoldenPlatform.tscn")
+const CLOUD_SCENE: PackedScene = preload("res://scenes/world/platforms/CloudPlatform.tscn")
+const SECRET_SCENE: PackedScene = preload("res://scenes/world/platforms/SecretPlatform.tscn")
+const TREASURE_SCENE: PackedScene = preload("res://scenes/world/platforms/TreasurePlatform.tscn")
+const VINE_SCENE: PackedScene = preload("res://scenes/world/platforms/SwingingVinePlatform.tscn")
 const BANANA_SCENE: PackedScene = preload("res://scenes/collectibles/Banana.tscn")
 const DOUBLE_BANANA_SCENE: PackedScene = preload("res://scenes/collectibles/powerups/DoubleBananaPowerup.tscn")
 const DOUBLE_JUMP_SCENE: PackedScene = preload("res://scenes/collectibles/powerups/DoubleJumpPowerup.tscn")
@@ -21,6 +28,13 @@ const NORMAL_POOL_SIZE := 10
 const MOVING_POOL_SIZE := 10
 const SPRING_POOL_SIZE := 6
 const BREAKING_POOL_SIZE := 8
+const ICE_POOL_SIZE := 6
+const STICKY_POOL_SIZE := 6
+const GOLDEN_POOL_SIZE := 3
+const CLOUD_POOL_SIZE := 6
+const SECRET_POOL_SIZE := 4
+const TREASURE_POOL_SIZE := 2
+const VINE_POOL_SIZE := 5
 const BANANA_POOL_SIZE := 20
 const POWERUP_POOL_SIZE_EACH := 4
 const CRUSHER_POOL_SIZE := 3
@@ -29,6 +43,8 @@ const BANANA_CHANCE := 0.45
 const POWERUP_CHANCE := 0.05
 const CRUSHER_CHANCE := 0.03
 const CRUSHER_MIN_GAP := 900.0
+const TREASURE_CHANCE := 0.015
+const TREASURE_MIN_GAP := 1400.0
 const ENEMY_CHANCE := 0.04
 const INITIAL_ROWS := 10
 const POWERUP_KEYS := ["double_banana", "double_jump", "shield"]
@@ -37,6 +53,7 @@ var camera: Camera2D
 var highest_spawned_y: float = 0.0
 var screen_width: float = 720.0
 var last_crusher_y: float = 1000000.0
+var last_treasure_y: float = 1000000.0
 
 var pools: Dictionary = {}
 var banana_pool: Array = []
@@ -55,6 +72,13 @@ func _ready() -> void:
 	pools["moving"] = _build_pool(MOVING_SCENE, MOVING_POOL_SIZE)
 	pools["spring"] = _build_pool(SPRING_SCENE, SPRING_POOL_SIZE)
 	pools["breaking"] = _build_pool(BREAKING_SCENE, BREAKING_POOL_SIZE)
+	pools["ice"] = _build_pool(ICE_SCENE, ICE_POOL_SIZE)
+	pools["sticky"] = _build_pool(STICKY_SCENE, STICKY_POOL_SIZE)
+	pools["golden"] = _build_pool(GOLDEN_SCENE, GOLDEN_POOL_SIZE)
+	pools["cloud"] = _build_pool(CLOUD_SCENE, CLOUD_POOL_SIZE)
+	pools["secret"] = _build_pool(SECRET_SCENE, SECRET_POOL_SIZE)
+	pools["treasure"] = _build_pool(TREASURE_SCENE, TREASURE_POOL_SIZE)
+	pools["vine"] = _build_pool(VINE_SCENE, VINE_POOL_SIZE)
 	for i in range(BANANA_POOL_SIZE):
 		var b: Banana = BANANA_SCENE.instantiate()
 		add_child(b)
@@ -99,6 +123,7 @@ func setup(start_camera: Camera2D, start_y: float) -> void:
 	camera = start_camera
 	highest_spawned_y = start_y
 	last_crusher_y = 1000000.0
+	last_treasure_y = 1000000.0
 	_spawn_initial(start_y)
 
 func reset() -> void:
@@ -164,25 +189,51 @@ func _get_enemy(key: String) -> EnemyBase:
 
 func _weighted_type(difficulty: float) -> String:
 	var r: float = randf()
-	var normal_w: float = lerp(0.60, 0.30, difficulty)
-	var moving_w: float = lerp(0.15, 0.20, difficulty)
-	var breaking_w: float = lerp(0.15, 0.25, difficulty)
-	var normal_ceiling: float = normal_w
-	var moving_ceiling: float = normal_ceiling + moving_w
-	var breaking_ceiling: float = moving_ceiling + breaking_w
-	if r < normal_ceiling:
+	var normal_w: float = lerp(0.42, 0.20, difficulty)
+	var moving_w: float = lerp(0.12, 0.15, difficulty)
+	var breaking_w: float = lerp(0.12, 0.18, difficulty)
+	var spring_w: float = lerp(0.08, 0.11, difficulty)
+	var ice_w: float = lerp(0.08, 0.10, difficulty)
+	var sticky_w: float = lerp(0.06, 0.07, difficulty)
+	var cloud_w: float = lerp(0.06, 0.07, difficulty)
+	var golden_w: float = 0.03
+	var secret_w: float = 0.02
+	var ceiling: float = normal_w
+	if r < ceiling:
 		return "normal"
-	elif r < moving_ceiling:
+	ceiling += moving_w
+	if r < ceiling:
 		return "moving"
-	elif r < breaking_ceiling:
+	ceiling += breaking_w
+	if r < ceiling:
 		return "breaking"
-	else:
+	ceiling += spring_w
+	if r < ceiling:
 		return "spring"
+	ceiling += ice_w
+	if r < ceiling:
+		return "ice"
+	ceiling += sticky_w
+	if r < ceiling:
+		return "sticky"
+	ceiling += cloud_w
+	if r < ceiling:
+		return "cloud"
+	ceiling += golden_w
+	if r < ceiling:
+		return "golden"
+	ceiling += secret_w
+	if r < ceiling:
+		return "secret"
+	return "vine"
 
 func _spawn_platform_row(y: float) -> void:
 	var alt: float = -y
 	var difficulty: float = GameManager.difficulty_for_altitude(alt)
 	var key: String = _weighted_type(difficulty)
+	if last_treasure_y - y >= TREASURE_MIN_GAP and randf() < TREASURE_CHANCE:
+		key = "treasure"
+		last_treasure_y = y
 	var plat: PlatformBase = _get_from_pool(key)
 	var x: float = randf_range(90.0, screen_width - 90.0)
 	var tint: Color = BiomeManager.tint_for_altitude(alt)

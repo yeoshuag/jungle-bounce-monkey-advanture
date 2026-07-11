@@ -12,6 +12,7 @@ const MAX_FALL_SPEED := 1400.0
 const HALF_WIDTH := 24.0
 const MIN_MAGNET_SHAPE_RADIUS := 1.0
 const DOUBLE_JUMP_FACTOR := 2.0
+const ICE_SLIDE_SPEED_FACTOR := 0.35
 
 @export var jump_power_multiplier: float = 1.0
 @export var move_speed: float = 700.0
@@ -22,6 +23,7 @@ var is_dragging: bool = false
 var alive: bool = true
 var screen_width: float = 720.0
 var shield_time_remaining: float = 0.0
+var ice_slide_time_remaining: float = 0.0
 
 @onready var sprite: MonkeySprite = $MonkeySprite
 @onready var magnet_area: Area2D = $MagnetArea
@@ -45,13 +47,17 @@ func reset(start_y: float) -> void:
 	magnet_area.monitoring = magnet_radius > 0.0
 	shield_time_remaining = UpgradeManager.get_shield_duration()
 	sprite.set_shielded(shield_time_remaining > 0.0)
+	ice_slide_time_remaining = 0.0
 
 func _physics_process(delta: float) -> void:
 	if not alive:
 		return
 	velocity_y = min(velocity_y + GRAVITY * delta, MAX_FALL_SPEED)
+	var effective_move_speed: float = move_speed
+	if ice_slide_time_remaining > 0.0:
+		effective_move_speed *= ICE_SLIDE_SPEED_FACTOR
 	if is_dragging:
-		position.x = move_toward(position.x, target_x, move_speed * delta)
+		position.x = move_toward(position.x, target_x, effective_move_speed * delta)
 	position.x = clamp(position.x, HALF_WIDTH, screen_width - HALF_WIDTH)
 	position.y += velocity_y * delta
 	sprite.squash = clamp(1.0 + velocity_y / 3000.0, 0.75, 1.25)
@@ -59,6 +65,8 @@ func _physics_process(delta: float) -> void:
 		shield_time_remaining = max(0.0, shield_time_remaining - delta)
 		if shield_time_remaining <= 0.0:
 			sprite.set_shielded(false)
+	if ice_slide_time_remaining > 0.0:
+		ice_slide_time_remaining = max(0.0, ice_slide_time_remaining - delta)
 	if position.y > _death_line():
 		die()
 
@@ -112,6 +120,9 @@ func bounce(force: float) -> void:
 func apply_shield(duration: float) -> void:
 	shield_time_remaining = max(shield_time_remaining, duration)
 	sprite.set_shielded(true)
+
+func apply_ice_slide(duration: float) -> void:
+	ice_slide_time_remaining = max(ice_slide_time_remaining, duration)
 
 func die() -> void:
 	if not alive:

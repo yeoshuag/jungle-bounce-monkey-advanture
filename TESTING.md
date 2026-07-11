@@ -77,6 +77,32 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
 - [ ] Touching any enemy ends the run exactly like falling or a Crusher
       Wall would — including being blocked/rescued by an active Shield.
 
+## New platform types (Round B1)
+
+- [ ] Icy blue-white platforms make the monkey slide — dragging still moves
+      it toward your finger, but noticeably more sluggishly for a second or
+      so after bouncing off one, then normal control returns.
+- [ ] Honey/amber platforms (with small droplet dots) give a much lower,
+      weaker bounce than a normal platform.
+- [ ] Bright gold platforms give a small automatic banana bonus (HUD banana
+      count jumps by 3, feeding the combo multiplier) the instant you bounce
+      off one, in addition to the bounce itself.
+- [ ] Pale, semi-transparent "cloud" platforms drift both side to side and
+      gently up and down (not just side to side like the gold Moving
+      platform).
+- [ ] Occasionally a platform is invisible until you get close, then fades
+      into view (purple) over a fraction of a second — it should still be
+      safely bounce-able once visible, and never invisible right as you're
+      about to land blind.
+- [ ] Rarely, a platform has a small treasure chest on top; bouncing on it
+      awards a bigger banana bonus (8) and it crumbles away like a Breaking
+      platform a moment later.
+- [ ] Rarely, a green platform hangs from a visible vine attached above it
+      and swings back and forth in an arc (not just straight side to side)
+      — it's still safe to bounce on mid-swing.
+- [ ] None of the above ever cause the monkey to get stuck, teleport, or
+      pass through a platform it visibly landed on.
+
 ## Pause / death / save loop
 
 - [ ] Tapping the "II" button (top-right) pauses the game, dims the
@@ -151,15 +177,23 @@ through this checklist in Godot 4.x (4.2+) before trusting it.
 
 ## Known Phase 1 scope limits (expected, not bugs)
 
-- Four platform types (Normal/Moving/Spring/Breaking) plus one hazard
-  (Crusher Walls) exist across all 6 biomes — biomes currently reskin
-  colors and gate which of the 4 enemies can spawn, they don't yet add
-  new platform types or hazards per biome (e.g. no lava/fire in Volcano
-  yet). Ice/Sticky/Golden/Cloud/Secret/Treasure platforms, Swinging Vine,
-  other environmental hazards (falling coconuts, fire, falling rocks),
+- Eleven platform types (Normal/Moving/Spring/Breaking/Ice/Sticky/Golden/
+  Cloud/Secret/Treasure/Swinging Vine) plus one hazard (Crusher Walls)
+  exist across all 6 biomes — biomes currently reskin colors and gate
+  which of the 4 enemies can spawn, they don't yet add new platform types
+  or hazards per biome (e.g. no lava/fire in Volcano yet). Swinging Vine is
+  a pendulum-motion platform you bounce off, not a full grab-and-swing
+  mechanic — a deliberate scope reduction from the original spec to avoid
+  a large, risky new Player physics state without in-editor playtesting.
+  Other environmental hazards (falling coconuts, fire, falling rocks),
   cosmetic shop (skins/hats/trails), missions, ads, and analytics are
   intentionally not implemented yet.
 - Only 3 momentary powerup types exist (Double Bananas, Double Jump,
   Shield) — Banana Rain, Golden Monkey, Rocket Banana, and Slow Motion from
-  the original spec are not implemented yet.
+  the original spec are not implemented yet (planned as Round B2).
+- The 4 rare collectibles from the spec (Golden Banana, Treasure Chest,
+  Ancient Idol, Magic Fruit) are not implemented as their own pickups yet
+  — the new Treasure platform's banana bonus is a placeholder for the
+  "Treasure Chest" flavor, not the full collectible system (planned as
+  Round B2).
 - No dedicated Settings screen yet — only a Mute toggle inside Pause.

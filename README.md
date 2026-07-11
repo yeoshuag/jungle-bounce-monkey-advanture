@@ -28,11 +28,17 @@ each transition. Four enemies (Bee, Snake, Parrot, Jungle Spirit) spawn
 only in their matching biome(s) and behave as instant-death hazards (same
 `"hazard"` group / shield-aware `die()` path as Crusher Walls).
 
-Planned next phases (not yet built): remaining platform types (Ice,
-Sticky, Golden, Cloud, Secret, Treasure, Swinging Vine), remaining
-powerups (Rocket Banana, Slow Motion, Golden Monkey, Banana Rain), rare
-collectibles (Golden Banana, Treasure Chest, Ancient Idol, Magic Fruit),
-cosmetic shop/skins, missions/achievements/daily rewards, ads + analytics
+Seven more platform types round out the mix: Ice (slippery landing),
+Sticky (weak bounce), Golden (bonus bananas on landing), Cloud (drifts in
+a 2D sine path), Secret (invisible until you get close), Treasure (rare,
+single-use, big banana payout), and Swinging Vine (a pendulum-motion
+platform — scoped down from a full grab/swing mechanic to fit the
+existing bounce-on-contact architecture).
+
+Planned next (Round B2, not yet built): remaining powerups (Rocket
+Banana, Slow Motion, Golden Monkey, Banana Rain), rare collectibles
+(Golden Banana, Treasure Chest, Ancient Idol, Magic Fruit), cosmetic
+shop/skins, missions/achievements/daily rewards, ads + analytics
 integration, and Google Play publishing materials.
 
 ## Android export
