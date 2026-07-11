@@ -58,6 +58,12 @@ jobs:
           mkdir -p build
           godot --headless --verbose --export-debug "Android" build/jungle-bounce-debug.apk
 
+      - name: Dump manifest info (orientation check)
+        run: |
+          AAPT="$ANDROID_HOME/build-tools/34.0.0/aapt"
+          "$AAPT" dump badging build/jungle-bounce-debug.apk | grep -i orientation || echo "no explicit orientation found in badging dump"
+          "$AAPT" dump xmltree build/jungle-bounce-debug.apk AndroidManifest.xml | grep -i -A2 "screenOrientation" || echo "no screenOrientation attribute found in manifest"
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
